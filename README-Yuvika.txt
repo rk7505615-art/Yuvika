@@ -1,8 +1,1 @@
-Yuvika PWA update files
-Replace these existing files in the Yuvika GitHub repository:
-- index.html
-- manifest.json
-- service-worker.js
-Keep icon-192.png and icon-512.png in the repository root.
-GitHub Pages should use branch main and folder /(root).
-After committing, open https://rk7505615-art.github.io/Yuvika/ in Chrome and refresh.
+Yuvika app files. Upload index.html, manifest.json, and service-worker.js to the ROOT of the GitHub Yuvika repository. Keep icon-192.png and icon-512.png in the same root folder. Then wait for GitHub Pages deployment.
