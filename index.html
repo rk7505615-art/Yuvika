@@ -1,4 +1,147 @@
-<https://rk7505615-art.github.io/Yuvika/
+<!DOCTYPE html>
+<html lang="en" data-theme="emerald">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#059669" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Yuvika" />
+  <link rel="manifest" href="/Yuvika/manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="/Yuvika/icon-192.png" />
+  <link rel="apple-touch-icon" href="/Yuvika/icon-192.png" />
+  <title>Yuvika — Payroll & Attendance</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+  <style>
+    /* ==================== 4 LUXURY FINTECH THEMES ==================== */
+    :root, [data-theme="emerald"] {
+      --bg-outer: #CBD5E1;
+      --bg-app: #F8FAFC;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F1F5F9;
+      --border-card: #E2E8F0;
+      --text-main: #0F172A;
+      --text-muted: #64748B;
+      --hero-from: #064E3B;
+      --hero-via: #047857;
+      --hero-to: #022C22;
+      --accent-primary: #059669;
+      --accent-soft: #ECFDF5;
+      --accent-border: #A7F3D0;
+      --accent-text: #065F46;
+      --sun-bg: #FFFBEB;
+      --sun-border: #FCD34D;
+      --sun-text: #92400E;
+      --nav-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    [data-theme="obsidian"] {
+      --bg-outer: #020617;
+      --bg-app: #0B1120;
+      --bg-card: #131C31;
+      --bg-subtle: #1E293B;
+      --border-card: #26334D;
+      --text-main: #F8FAFC;
+      --text-muted: #94A3B8;
+      --hero-from: #1E1B4B;
+      --hero-via: #312E81;
+      --hero-to: #0F172A;
+      --accent-primary: #6366F1;
+      --accent-soft: rgba(99, 102, 241, 0.16);
+      --accent-border: rgba(129, 140, 248, 0.35);
+      --accent-text: #A5B4FC;
+      --sun-bg: rgba(245, 158, 11, 0.14);
+      --sun-border: rgba(251, 191, 36, 0.4);
+      --sun-text: #FCD34D;
+      --nav-bg: rgba(19, 28, 49, 0.96);
+    }
+
+    [data-theme="saffron"] {
+      --bg-outer: #D6D3D1;
+      --bg-app: #FAF7F2;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F5EFE6;
+      --border-card: #E7DEC8;
+      --text-main: #1C1917;
+      --text-muted: #78716C;
+      --hero-from: #1E1B4B;
+      --hero-via: #431407;
+      --hero-to: #7C2D12;
+      --accent-primary: #EA580C;
+      --accent-soft: #FFF7ED;
+      --accent-border: #FDBA74;
+      --accent-text: #9A3412;
+      --sun-bg: #FEF3C7;
+      --sun-border: #F59E0B;
+      --sun-text: #78350F;
+      --nav-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    [data-theme="oceanic"] {
+      --bg-outer: #CBD5E1;
+      --bg-app: #F1F5F9;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #E2E8F0;
+      --border-card: #CBD5E1;
+      --text-main: #0F172A;
+      --text-muted: #475569;
+      --hero-from: #0F172A;
+      --hero-via: #0369A1;
+      --hero-to: #0C4A6E;
+      --accent-primary: #0284C7;
+      --accent-soft: #F0F9FF;
+      --accent-border: #7DD3FC;
+      --accent-text: #075985;
+      --sun-bg: #FFFBEB;
+      --sun-border: #FBBF24;
+      --sun-text: #92400E;
+      --nav-bg: rgba(255, 255, 255, 0.96);
+    }
+
+    [data-theme="amethyst"] {
+      --bg-outer: #090612;
+      --bg-app: #120D24;
+      --bg-card: #1C1536;
+      --bg-subtle: #281E4B;
+      --border-card: #382A66;
+      --text-main: #FAF5FF;
+      --text-muted: #C4B5FD;
+      --hero-from: #2E1065;
+      --hero-via: #581C87;
+      --hero-to: #1E1B4B;
+      --accent-primary: #A855F7;
+      --accent-soft: rgba(168, 85, 247, 0.18);
+      --accent-border: rgba(192, 132, 252, 0.4);
+      --accent-text: #E9D5FF;
+      --sun-bg: rgba(245, 158, 11, 0.16);
+      --sun-border: rgba(251, 191, 36, 0.45);
+      --sun-text: #FDE68A;
+      --nav-bg: rgba(28, 21, 54, 0.96);
+    }
+
+    [data-theme="rosequartz"] {
+      --bg-outer: #E7D5D8;
+      --bg-app: #FDF7F8;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F9EBEE;
+      --border-card: #F3D5DC;
+      --text-main: #27131A;
+      --text-muted: #7F5563;
+      --hero-from: #4C0519;
+      --hero-via: #881337;
+      --hero-to: #3B0719;
+      --accent-primary: #E11D48;
+      --accent-soft: #FFF1F2;
+      --accent-border: #FDA4AF;
+      --accent-text: #9F1239;
+      --sun-bg: #FFFBEB;
+      --sun-border: #F59E0B;
+      --sun-text: #92400E;
+      --nav-bg: rgba(255, 255, 255, 0.96);
+    }
+
     [data-theme="cyberteal"] {
       --bg-outer: #031114;
       --bg-app: #071A1E;
@@ -899,7 +1042,7 @@
 
   <script>
     // ==================== STATE & CONSTANTS ====================
-    const STORAGE_KEY = 'yuvika_app_v1';
+    const STORAGE_KEY = 'payease_india_final_v1';
     const TODAY_KEY = '2026-11';
     const TODAY_DAY = 23;
 
@@ -2140,8 +2283,8 @@
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
-          .catch(error => console.error("PayEase service worker registration failed:", error));
+        navigator.serviceWorker.register("/Yuvika/service-worker.js", { scope: "/Yuvika/" })
+          .catch(error => console.error("Yuvika service worker registration failed:", error));
       });
     }
   </script>
