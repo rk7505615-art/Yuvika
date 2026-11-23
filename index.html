@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#059669" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="Yuvika" />
-  <link rel="manifest" href="/Yuvika/manifest.json" />
-  <link rel="icon" type="image/png" sizes="192x192" href="/Yuvika/icon-192.png" />
-  <link rel="apple-touch-icon" href="/Yuvika/icon-192.png" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png" />
+  <link rel="apple-touch-icon" href="./icon-192.png" />
   <title>Yuvika — Payroll & Attendance</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -387,6 +387,15 @@
 
     <!-- ==================== SCROLLABLE CONTENT AREA ==================== -->
     <main class="flex-1 overflow-y-auto no-scrollbar px-3 pt-2 pb-24 space-y-2.5">
+      <!-- Yuvika Google Drive Backup -->
+      <section class="rounded-2xl border border-emerald-200 bg-white p-3 shadow-sm no-print" aria-label="Google Drive backup">
+        <div class="flex items-center justify-between gap-2">
+          <div><div class="font-extrabold text-sm text-slate-800">☁️ Yuvika Cloud Backup</div>
+          <div id="drive-backup-status" class="text-xs text-slate-500 mt-1">Google Drive से बैकअप जोड़ें</div></div>
+          <div class="flex flex-col gap-1"><button id="drive-backup-button" type="button" onclick="connectYuvikaDrive()" class="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white">Connect & Backup</button><button type="button" onclick="restoreYuvikaDrive()" class="rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700">Restore Backup</button></div>
+        </div>
+        <div class="text-[10px] text-slate-500 mt-2">बैकअप आपकी Google Drive में सेव होगा। रोज़ 2 बजे के बाद ऐप खोलने पर बैकअप का प्रयास होगा; ऐप बंद होने पर PWA अपने-आप बैकग्राउंड में नहीं चल सकता।</div>
+      </section>
 
       <!-- ==================== TAB 1: ATTENDANCE & PAY ==================== -->
       <section id="view-attendance" class="space-y-2.5">
@@ -2280,10 +2289,129 @@
       initPayEaseApp();
     }
   </script>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <script>
+    // Google Drive backup for Yuvika. OAuth Client ID is a public identifier.
+    const YUVIKA_GOOGLE_CLIENT_ID = '846457516563-9ldtq7ivego4stelmuuvg58cqtb14gao.apps.googleusercontent.com';
+    const YUVIKA_DRIVE_SCOPE = 'https://www.googleapis.com/auth/drive.file';
+    const YUVIKA_BACKUP_NAME = 'Yuvika-Auto-Backup.json';
+    let yuvikaDriveToken = null;
+    let yuvikaTokenClient = null;
+    let yuvikaDriveAction = 'backup';
+
+    function setYuvikaBackupStatus(message) {
+      const el = document.getElementById('drive-backup-status');
+      if (el) el.textContent = message;
+    }
+    function yuvikaGetTokenClient() {
+      if (!window.google || !google.accounts || !google.accounts.oauth2) return null;
+      if (!yuvikaTokenClient) {
+        yuvikaTokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: YUVIKA_GOOGLE_CLIENT_ID,
+          scope: YUVIKA_DRIVE_SCOPE,
+          callback: async (response) => {
+            if (response && response.access_token) {
+              yuvikaDriveToken = response.access_token;
+              if (yuvikaDriveAction === 'restore') await yuvikaRestoreBackup();
+              else await yuvikaUploadBackup();
+            } else {
+              setYuvikaBackupStatus('Google अनुमति नहीं मिली। फिर से Connect करें।');
+            }
+          },
+          error_callback: (error) => {
+            console.error('Google sign-in error:', error);
+            setYuvikaBackupStatus('Google कनेक्शन पूरा नहीं हुआ। फिर कोशिश करें।');
+          }
+        });
+      }
+      return yuvikaTokenClient;
+    }
+    function connectYuvikaDrive() {
+      const client = yuvikaGetTokenClient();
+      if (!client) {
+        setYuvikaBackupStatus('Google सेवा लोड हो रही है। 5 सेकंड बाद फिर दबाएँ।');
+        return;
+      }
+      yuvikaDriveAction = 'backup';
+      setYuvikaBackupStatus('Google अनुमति का इंतज़ार है…');
+      client.requestAccessToken({ prompt: 'consent' });
+    }
+    function restoreYuvikaDrive() {
+      const client = yuvikaGetTokenClient();
+      if (!client) { setYuvikaBackupStatus('Google सेवा लोड हो रही है। 5 सेकंड बाद फिर दबाएँ।'); return; }
+      yuvikaDriveAction = 'restore';
+      setYuvikaBackupStatus('Google अनुमति का इंतज़ार है…');
+      client.requestAccessToken({ prompt: 'consent' });
+    }
+    async function yuvikaRestoreBackup() {
+      try {
+        const storageKey = (typeof STORAGE_KEY !== 'undefined') ? STORAGE_KEY : 'payease_india_final_v1';
+        const search = await fetch("https://www.googleapis.com/drive/v3/files?q=" + encodeURIComponent("name='" + YUVIKA_BACKUP_NAME + "' and trashed=false") + "&fields=files(id,name)", { headers: { Authorization: 'Bearer ' + yuvikaDriveToken } });
+        if (!search.ok) throw new Error('Drive search failed: ' + search.status);
+        const found = await search.json();
+        if (!found.files || !found.files.length) { setYuvikaBackupStatus('Google Drive में Yuvika बैकअप नहीं मिला।'); return; }
+        const download = await fetch('https://www.googleapis.com/drive/v3/files/' + found.files[0].id + '?alt=media', { headers: { Authorization: 'Bearer ' + yuvikaDriveToken } });
+        if (!download.ok) throw new Error('Drive download failed: ' + download.status);
+        const saved = await download.json();
+        if (!saved || saved.app !== 'Yuvika' || !saved.data || typeof saved.data !== 'object') throw new Error('Invalid backup file');
+        if (!confirm('मौजूदा मोबाइल डेटा की जगह Google Drive वाला बैकअप लोड होगा। क्या आगे बढ़ें?')) { setYuvikaBackupStatus('Restore रद्द किया गया।'); return; }
+        localStorage.setItem(storageKey, JSON.stringify(saved.data));
+        setYuvikaBackupStatus('Restore सफल! ऐप को दोबारा खोलें।');
+        setTimeout(() => location.reload(), 1200);
+      } catch (error) {
+        console.error('Yuvika Drive restore error:', error);
+        setYuvikaBackupStatus('Restore नहीं हुआ। इंटरनेट/Google अनुमति जाँचें और फिर कोशिश करें।');
+      }
+    }
+    async function yuvikaUploadBackup() {
+      try {
+        const storageKey = (typeof STORAGE_KEY !== 'undefined') ? STORAGE_KEY : 'payease_india_final_v1';
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) {
+          setYuvikaBackupStatus('अभी ऐप में सेव करने के लिए डेटा नहीं मिला।');
+          return;
+        }
+        const backup = JSON.stringify({ app: 'Yuvika', version: 1, backedUpAt: new Date().toISOString(), storageKey, data: JSON.parse(raw) }, null, 2);
+        const search = await fetch("https://www.googleapis.com/drive/v3/files?q=" + encodeURIComponent("name='" + YUVIKA_BACKUP_NAME + "' and trashed=false") + "&fields=files(id,name)", {
+          headers: { Authorization: 'Bearer ' + yuvikaDriveToken }
+        });
+        if (!search.ok) throw new Error('Drive search failed: ' + search.status);
+        const found = await search.json();
+        const metadata = { name: YUVIKA_BACKUP_NAME, mimeType: 'application/json' };
+        const boundary = 'yuvika_backup_boundary';
+        const body = '--' + boundary + '\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n' + JSON.stringify(metadata) + '\r\n--' + boundary + '\r\nContent-Type: application/json\r\n\r\n' + backup + '\r\n--' + boundary + '--';
+        let url, method;
+        if (found.files && found.files.length) {
+          url = 'https://www.googleapis.com/upload/drive/v3/files/' + found.files[0].id + '?uploadType=multipart';
+          method = 'PATCH';
+        } else {
+          url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
+          method = 'POST';
+        }
+        const upload = await fetch(url, { method, headers: { Authorization: 'Bearer ' + yuvikaDriveToken, 'Content-Type': 'multipart/related; boundary=' + boundary }, body });
+        if (!upload.ok) throw new Error('Drive upload failed: ' + upload.status);
+        localStorage.setItem('yuvika_last_drive_backup', new Date().toISOString());
+        setYuvikaBackupStatus('बैकअप सफल! ' + new Date().toLocaleString('hi-IN'));
+        const btn = document.getElementById('drive-backup-button');
+        if (btn) btn.textContent = 'Backup Again';
+      } catch (error) {
+        console.error('Yuvika Drive backup error:', error);
+        setYuvikaBackupStatus('बैकअप नहीं हुआ। इंटरनेट/Google अनुमति जाँचें और फिर दबाएँ।');
+      }
+    }
+    window.addEventListener('load', () => {
+      const last = localStorage.getItem('yuvika_last_drive_backup');
+      if (last) setYuvikaBackupStatus('आखिरी बैकअप: ' + new Date(last).toLocaleString('hi-IN'));
+      const now = new Date();
+      if (now.getHours() >= 14 && (!last || new Date(last).toDateString() !== now.toDateString())) {
+        setYuvikaBackupStatus('आज 2 बजे के बाद बैकअप बाकी है। Connect & Backup दबाएँ।');
+      }
+    });
+  </script>
   <script>
     if ("serviceWorker" in navigator) {
       window.addEventListener("load", () => {
-        navigator.serviceWorker.register("/Yuvika/service-worker.js", { scope: "/Yuvika/" })
+        navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
           .catch(error => console.error("PayEase service worker registration failed:", error));
       });
     }
