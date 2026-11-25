@@ -394,7 +394,7 @@
           <div id="drive-backup-status" class="text-xs text-slate-500 mt-1">Google Drive से बैकअप जोड़ें</div></div>
           <div class="flex flex-col gap-1"><button id="drive-backup-button" type="button" onclick="connectYuvikaDrive()" class="rounded-xl bg-emerald-600 px-3 py-2 text-xs font-extrabold text-white">Connect & Backup</button><button type="button" onclick="restoreYuvikaDrive()" class="rounded-xl border border-slate-300 px-3 py-2 text-xs font-bold text-slate-700">Restore Backup</button></div>
         </div>
-        <div class="text-[10px] text-slate-500 mt-2">बैकअप आपकी Google Drive में सेव होगा। रोज़ 2 बजे के बाद ऐप खोलने पर बैकअप का प्रयास होगा; ऐप बंद होने पर PWA अपने-आप बैकग्राउंड में नहीं चल सकता।</div>
+        <div class="text-[10px] text-slate-500 mt-2">बैकअप आपकी Google Drive में सेव होगा। रोज़ दोपहर 1:15 बजे के बाद ऐप खोलने पर बैकअप का रिमाइंडर दिखेगा; ऐप बंद होने पर PWA अपने-आप बैकग्राउंड में नहीं चल सकता।</div>
       </section>
 
       <!-- ==================== TAB 1: ATTENDANCE & PAY ==================== -->
@@ -884,11 +884,54 @@
 
       </section>
 
+      <!-- ==================== TAB 4: YEARLY INCREMENT & ARREARS ==================== -->
+      <section id="view-increment" class="hidden space-y-3">
+        <div class="t-card rounded-2xl border p-3.5 space-y-1">
+          <h2 class="font-display text-base font-extrabold">📈 Yearly Increment & Arrears</h2>
+          <p class="text-xs t-muted">हर साल का Increment और Arrears रिकॉर्ड करें। आगे के सालों में पुराना Increment अपने-आप जुड़ता जाएगा।</p>
+        </div>
+        <div class="t-card rounded-2xl border p-3.5 space-y-3">
+          <div class="grid grid-cols-2 gap-2">
+            <label class="text-xs font-bold t-muted">साल
+              <input id="inc-year" type="number" min="2026" max="2100" value="2026" class="w-full mt-1 p-2.5 rounded-xl border t-subtle text-base font-extrabold" />
+            </label>
+            <label class="text-xs font-bold t-muted">मासिक Increment (₹)
+              <input id="inc-monthly" type="number" min="0" step="1" value="2000" class="w-full mt-1 p-2.5 rounded-xl border t-subtle text-base font-extrabold" />
+            </label>
+            <label class="text-xs font-bold t-muted">कुल मिला Arrears (₹)
+              <input id="inc-arrears" type="number" min="0" step="1" value="13124" class="w-full mt-1 p-2.5 rounded-xl border t-subtle text-base font-extrabold" />
+            </label>
+            <label class="text-xs font-bold t-muted">कितने महीने का Arrears
+              <input id="inc-months" type="number" min="1" max="12" value="7" class="w-full mt-1 p-2.5 rounded-xl border t-subtle text-base font-extrabold" />
+            </label>
+            <label class="text-xs font-bold t-muted col-span-2">बिना वेतन छुट्टी (दिन)
+              <input id="inc-unpaid" type="number" min="0" step="1" value="25" class="w-full mt-1 p-2.5 rounded-xl border t-subtle text-base font-extrabold" />
+            </label>
+          </div>
+          <button type="button" onclick="saveIncrementRecord()" class="w-full py-3 rounded-xl bg-emerald-600 text-white font-extrabold text-sm">साल का रिकॉर्ड सेव करें</button>
+          <p class="text-[10px] t-muted">Sunday duty का अलग घंटा यहाँ नहीं भरना है। वह Attendance में दर्ज रहेगा; Arrears की कुल रकम में Sunday का हिस्सा शामिल मानकर रिकॉर्ड होगा।</p>
+        </div>
+        <div class="t-card rounded-2xl border p-3.5 space-y-2">
+          <h3 class="font-display text-sm font-extrabold">आपका कुल Increment</h3>
+          <div class="grid grid-cols-2 gap-2">
+            <div class="t-subtle rounded-xl p-3"><span class="text-[10px] t-muted block">कुल मासिक बढ़ोतरी</span><strong id="inc-total-monthly" class="text-xl font-black">₹2,000</strong></div>
+            <div class="t-subtle rounded-xl p-3"><span class="text-[10px] t-muted block">सालाना अनुमान (×12)</span><strong id="inc-total-yearly" class="text-xl font-black">₹24,000</strong></div>
+            <div class="t-subtle rounded-xl p-3"><span class="text-[10px] t-muted block">इस साल औसत Arrears / महीना</span><strong id="inc-average-arrears" class="text-lg font-black">₹1,875</strong></div>
+            <div class="t-subtle rounded-xl p-3"><span class="text-[10px] t-muted block">Increment × महीने</span><strong id="inc-expected-arrears" class="text-lg font-black">₹14,000</strong></div>
+          </div>
+          <p id="inc-note" class="text-[11px] t-muted">2026 का रिकॉर्ड शुरुआती जानकारी के रूप में है।</p>
+        </div>
+        <div class="t-card rounded-2xl border p-3.5 space-y-2">
+          <h3 class="font-display text-sm font-extrabold">साल-दर-साल रिकॉर्ड</h3>
+          <div id="increment-record-list" class="space-y-2 text-xs"><p class="t-muted">अभी कोई रिकॉर्ड नहीं।</p></div>
+        </div>
+      </section>
+
     </main>
 
-    <!-- ==================== FLOATING 3-TAB BOTTOM NAVIGATION ==================== -->
+    <!-- ==================== FLOATING 4-TAB BOTTOM NAVIGATION ==================== -->
     <div class="px-3.5 pb-4 pt-1 sticky bottom-0 z-40 no-print pointer-events-none">
-      <nav class="floating-nav pointer-events-auto rounded-2xl border shadow-xl p-1 grid grid-cols-3 gap-1">
+      <nav class="floating-nav pointer-events-auto rounded-2xl border shadow-xl p-1 grid grid-cols-4 gap-1">
         <button type="button" id="nav-attendance" onclick="switchView('attendance')"
           class="flex flex-col items-center justify-center py-1.5 rounded-xl accent-pill font-extrabold text-[10px] transition">
           <span class="text-sm leading-none mb-0.5">📅</span>
@@ -903,6 +946,11 @@
           class="flex flex-col items-center justify-center py-1.5 rounded-xl t-muted font-bold text-[10px] transition">
           <span class="text-sm leading-none mb-0.5">🧾</span>
           <span>Package & Slip</span>
+        </button>
+        <button type="button" id="nav-increment" onclick="switchView('increment')"
+          class="flex flex-col items-center justify-center py-1.5 rounded-xl t-muted font-bold text-[10px] transition">
+          <span class="text-sm leading-none mb-0.5">📈</span>
+          <span>Increment</span>
         </button>
       </nav>
     </div>
@@ -1095,7 +1143,8 @@
         pfCap1800: false
       },
       // Blank calendar per month: { "2026-11": { "1": { status: "P", ot: 0 } } }
-      attendanceByMonth: {}
+      attendanceByMonth: {},
+      incrementRecords: [{ year: 2026, monthlyIncrement: 2000, arrears: 13124, arrearsMonths: 7, unpaidLeaveDays: 25 }]
     };
 
     // ==================== PARSING & FORMATTING HELPERS ====================
@@ -1161,7 +1210,8 @@
           showSundayHoursBar: state.showSundayHoursBar,
           divisorMode: state.divisorMode,
           settings: state.settings,
-          attendanceByMonth: state.attendanceByMonth
+          attendanceByMonth: state.attendanceByMonth,
+          incrementRecords: state.incrementRecords
         }));
       } catch (_err) {
         // Ignore storage errors in restricted environments
@@ -1205,6 +1255,9 @@
         }
         if (parsed.attendanceByMonth && typeof parsed.attendanceByMonth === 'object') {
           state.attendanceByMonth = parsed.attendanceByMonth;
+        }
+        if (Array.isArray(parsed.incrementRecords)) {
+          state.incrementRecords = parsed.incrementRecords.filter(r => r && Number.isFinite(Number(r.year)));
         }
       } catch (_err) {
         // Fallback cleanly to default state
@@ -1887,7 +1940,7 @@
 
     function switchView(viewName) {
       state.activeView = viewName;
-      ['attendance', 'register', 'payslip'].forEach(v => {
+      ['attendance', 'register', 'payslip', 'increment'].forEach(v => {
         const sec = document.getElementById('view-' + v);
         if (sec) sec.classList.toggle('hidden', v !== viewName);
         const nav = document.getElementById('nav-' + v);
@@ -1901,6 +1954,37 @@
           }
         }
       });
+    }
+
+    function renderIncrementRecords() {
+      const records = [...(state.incrementRecords || [])].sort((a,b) => Number(a.year)-Number(b.year));
+      const totalMonthly = records.reduce((sum, r) => sum + Math.max(0, Number(r.monthlyIncrement) || 0), 0);
+      const latest = records[records.length - 1];
+      const arrearsAverage = latest && Number(latest.arrearsMonths) > 0 ? Number(latest.arrears) / Number(latest.arrearsMonths) : 0;
+      const expected = latest ? (Number(latest.monthlyIncrement) || 0) * (Number(latest.arrearsMonths) || 0) : 0;
+      document.getElementById('inc-total-monthly').textContent = fmtWhole(totalMonthly);
+      document.getElementById('inc-total-yearly').textContent = fmtWhole(totalMonthly * 12);
+      document.getElementById('inc-average-arrears').textContent = fmtWhole(arrearsAverage);
+      document.getElementById('inc-expected-arrears').textContent = fmtWhole(expected);
+      document.getElementById('inc-note').textContent = latest ? `${latest.year} के रिकॉर्ड में ${Number(latest.unpaidLeaveDays)||0} दिन बिना वेतन छुट्टी दर्ज हैं। Arrears में Sunday duty शामिल मानी गई है।` : 'पहले साल का Increment रिकॉर्ड जोड़ें।';
+      const list = document.getElementById('increment-record-list');
+      list.innerHTML = records.length ? records.map(r => `<div class="t-subtle rounded-xl p-3 flex items-center justify-between gap-2"><div><strong>${Number(r.year)}</strong><div class="t-muted mt-1">Arrears ${fmtWhole(r.arrears)} • ${Number(r.arrearsMonths)||0} महीने • बिना वेतन छुट्टी ${Number(r.unpaidLeaveDays)||0} दिन</div></div><div class="text-right"><strong>${fmtWhole(r.monthlyIncrement)}/माह</strong><div class="t-muted mt-1">कुल मासिक ${fmtWhole(records.filter(x=>Number(x.year)<=Number(r.year)).reduce((a,x)=>a+(Number(x.monthlyIncrement)||0),0))}</div></div></div>`).join('') : '<p class="t-muted">अभी कोई रिकॉर्ड नहीं।</p>';
+    }
+
+    function saveIncrementRecord() {
+      const year = Number(document.getElementById('inc-year').value);
+      const monthlyIncrement = Number(document.getElementById('inc-monthly').value);
+      const arrears = Number(document.getElementById('inc-arrears').value);
+      const arrearsMonths = Number(document.getElementById('inc-months').value);
+      const unpaidLeaveDays = Number(document.getElementById('inc-unpaid').value);
+      if (!Number.isInteger(year) || year < 2026 || year > 2100 || monthlyIncrement < 0 || arrears < 0 || !Number.isInteger(arrearsMonths) || arrearsMonths < 1 || arrearsMonths > 12 || unpaidLeaveDays < 0) {
+        showToast('कृपया सही जानकारी भरें।'); return;
+      }
+      const record = { year, monthlyIncrement, arrears, arrearsMonths, unpaidLeaveDays };
+      const index = state.incrementRecords.findIndex(r => Number(r.year) === year);
+      if (index >= 0) state.incrementRecords[index] = record; else state.incrementRecords.push(record);
+      state.incrementRecords.sort((a,b) => Number(a.year)-Number(b.year));
+      saveState(); renderIncrementRecords(); showToast(`${year} का Increment रिकॉर्ड सेव हुआ।`);
     }
 
     function copyWhatsAppSummary() {
@@ -2277,9 +2361,11 @@
         applyTheme(state.theme, false);
         syncInputsFromSettings();
         renderAll(false);
+        renderIncrementRecords();
       } catch (err) {
         console.error('PayEase init fallback:', err);
         renderAll(false);
+        renderIncrementRecords();
       }
     }
 
@@ -2403,8 +2489,8 @@
       const last = localStorage.getItem('yuvika_last_drive_backup');
       if (last) setYuvikaBackupStatus('आखिरी बैकअप: ' + new Date(last).toLocaleString('hi-IN'));
       const now = new Date();
-      if (now.getHours() >= 14 && (!last || new Date(last).toDateString() !== now.toDateString())) {
-        setYuvikaBackupStatus('आज 2 बजे के बाद बैकअप बाकी है। Connect & Backup दबाएँ।');
+      if ((now.getHours() > 13 || (now.getHours() === 13 && now.getMinutes() >= 15)) && (!last || new Date(last).toDateString() !== now.toDateString())) {
+        setYuvikaBackupStatus('आज दोपहर 1:15 बजे के बाद बैकअप बाकी है। Connect & Backup दबाएँ।');
       }
     });
   </script>
